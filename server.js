@@ -5,7 +5,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Basic route - MUST work
+// Root route
 app.get('/', (req, res) => {
     res.send('FoksTech Bot Server is running!');
 });
@@ -19,24 +19,18 @@ app.get('/api/status', (req, res) => {
     });
 });
 
-// Webhook GET (for testing)
+// Webhook route
 app.get('/webhook', (req, res) => {
     res.send('Webhook endpoint is ready');
 });
 
-// Webhook POST (Telegram will use this)
 app.post('/webhook', (req, res) => {
-    console.log('Webhook received:', req.body);
     res.status(200).send('OK');
 });
 
-// Download API
+// Download route
 app.post('/api/download', (req, res) => {
-    const { title, type, messageId, size, quality } = req.body;
     const code = Math.random().toString(36).substring(2, 10).toUpperCase();
-    
-    console.log(`Download request: ${title}, MsgID: ${messageId}, Code: ${code}`);
-    
     res.json({
         success: true,
         link: `https://t.me/FoksTechBot?start=${code}`,
@@ -44,8 +38,9 @@ app.post('/api/download', (req, res) => {
     });
 });
 
+// IMPORTANT: Railway uses PORT environment variable
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server running on port ${PORT}`);
-    console.log(`🌐 Base URL: https://fokstech-backend-production.up.railway.app`);
+    console.log(`🌐 Base URL: https://${process.env.RAILWAY_STATIC_URL || 'localhost'}`);
 });
